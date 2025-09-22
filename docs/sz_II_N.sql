@@ -1,0 +1,14 @@
+grant all privileges on `bartha\_%`.* to 'bartha'@'%' identified by 'levente';
+grant all privileges on `bus\_%`.* to 'bus'@'%' identified by 'tamas';
+grant all privileges on `cipola\_%`.* to 'cipola'@'%' identified by 'akos';
+grant all privileges on `ewemor\_%`.* to 'ewemor'@'%' identified by 'martin';
+grant all privileges on `fazekas\_%`.* to 'fazekas'@'%' identified by 'laura';
+grant all privileges on `gaspar\_%`.* to 'gaspar'@'%' identified by 'bence';
+grant all privileges on `hanak\_%`.* to 'hanak'@'%' identified by 'renata';
+grant all privileges on `kovesdi\_%`.* to 'kovesdi'@'%' identified by 'akos';
+grant all privileges on `lennert\_%`.* to 'lennert'@'%' identified by 'adam';
+grant all privileges on `nagy\_%`.* to 'nagy'@'%' identified by 'bianka';
+grant all privileges on `traxler\_%`.* to 'traxler'@'%' identified by 'koppany';
+grant all privileges on `pok\_%`.* to 'pok'@'%' identified by 'laszlo';
+grant all privileges on `vamosi\_%`.* to 'vamosi'@'%' identified by 'laszlo';
+grant all privileges on `zsitnyak\_%`.* to 'zsitnyak'@'%' identified by 'adam';
