@@ -37,11 +37,15 @@ Route::get("/getfounddrink",[DrinnkBuilderController::class,"getFoundDrink"]);
 
 Route::get("/updatedrink",[DrinnkBuilderController::class,"updateDrink"]);
 
+Route::get("/modifydrink",[DrinnkBuilderController::class,"modifyDrink"]);
 
-Route::get("/deletedrink",[DrinnkBuilderController::class,"deleteDrink"]);
+
+Route::get("/deletedrinks/{id}",[DrinnkBuilderController::class,"deleteDrinks"]);
 
 Route::get("/alldata",[DrinnkBuilderController::class,"getAllData"]);
 
 Route::get("/drinkdata",[DrinnkBuilderController::class,"getDrinkData"]);
 
-Route::get("/drinkdate",[DrinnkBuilderController::class,"getDates"]);
+Route::get("/palinka",[DrinnkBuilderController::class,"getPalinka"]);
+
+
