@@ -1,0 +1,22 @@
+INSERT INTO packages (package)
+VALUES
+ ( 'Kis'),
+ ( 'Közepes'),
+ ( 'Nagy'),
+ ( 'Extra nagy'),
+ ( 'Szimpla'),
+ ( 'Dupla'),
+ ( 'Kicsi üveg'),
+ ( 'Közepes üveg'),
+ ( 'Nagy üveg'),
+ ( 'Különleges'),
+ ( 'Szendvics'),
+ ( 'Tölcsér'),
+ ( 'Karton'),
+ ( 'Műanyag'),
+ ( 'Papír'),
+ ( 'Üveg'),
+ ( 'Díszdoboz'),
+ ( 'Karton doboz'),
+ ( 'Fém doboz'),
+ ( 'Egyedi csomagolás');
