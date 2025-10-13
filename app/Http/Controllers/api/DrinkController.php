@@ -6,51 +6,51 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Drink;
 
-class DrinkController extends Controller {
+class DrinkController extends ResponseController {
 
     public function getDrinks() {
 
         $drinks = Drink::all();
 
-        return $drinks;
+        return $this->sendResponse( $drinks, "Betöltés rendben" );
     }
 
     public function getDrink( Request $request ) {
 
         //$ip = $request->ip();
-        $name = $request[ "name" ];
-        $drink = Drink::where( "drink", $name )->get();
+        $name = $request[ "drink" ];
+        $drink = Drink::where( "drink", $name )->first();
 
-        return $drink;
+        return $this->sendResponse(  $drink, "Egy ital" );
     }
 
     public function create( Request $request ) {
 
         $drink = new Drink;
-        $drink->drink = $request[ "nev" ];
-        $drink->amount = $request[ "mennyiseg" ];
-        $drink->price = $request[ "ar" ];
-        $drink->type_id = $request[ "tipus" ];
-        $drink->package_id = $request[ "kiszereles" ];
+        $drink->drink = $request[ "drink" ];
+        $drink->amount = $request[ "amount" ];
+        $drink->price = $request[ "price" ];
+        $drink->type_id = $request[ "type_id" ];
+        $drink->package_id = $request[ "package_id" ];
 
         $drink->save();
 
-        return $drink;
+        return $this->sendResponse( $drink, "Sikeres kiírás" );
     }
 
     public function update( Request $request ) {
 
         $drink = Drink::find( $request[ "id" ]);
 
-        $drink->drink = $request[ "nev" ];
-        $drink->amount = $request[ "mennyiseg" ];
-        $drink->price = $request[ "ar" ];
-        $drink->type_id = $request[ "tipus" ];
-        $drink->package_id = $request[ "kiszereles" ];
+        $drink->drink = $request[ "drink" ];
+        $drink->amount = $request[ "amount" ];
+        $drink->price = $request[ "price" ];
+        $drink->type_id = $request[ "type_id" ];
+        $drink->package_id = $request[ "package_id" ];
 
         $drink->update();
 
-        return $drink;
+        return $this->sendResponse( $drink, "Sikeres frissítés" );
     }
 
     public function destroy( $id ) {
@@ -58,6 +58,6 @@ class DrinkController extends Controller {
         $drink = Drink::find( $id );
         $success = $drink->delete();
 
-        return $success;
+        return $this->sendResponse( $drink, "Sikeres törlés" );
     }
 }
