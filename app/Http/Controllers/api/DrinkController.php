@@ -41,7 +41,7 @@ class DrinkController extends ResponseController {
 
     public function update( Request $request, $id ) {
 
-        $drink = Drink::find("id");
+        $drink = Drink::find($id);
 
         if (is_null($drink)) {
             return $this->sendError("Nem végrehajtható","Nincs ilyen rekord",405);
@@ -49,13 +49,14 @@ class DrinkController extends ResponseController {
             $drink->drink = $request[ "drink" ];
             $drink->amount = $request[ "amount" ];
             $drink->price = $request[ "price" ];
-            $drink->type_id = $request[ "type_id" ];
-            $drink->package_id = $request[ "package_id" ];
+            $drink->type_id = (new TypeController)->getTypeId($request["type"]);
+            $drink->package_id = (new PackageController)->getPackageId($request["package"]);
 
             $drink->update();
 
             return $this->sendResponse($drink,"Sikeres frissítés");
         }
+        return $drink;
 
 
     }

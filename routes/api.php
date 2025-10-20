@@ -38,7 +38,7 @@ Route::get('/user', function (Request $request) {
 Route::get( "/drinks", [ DrinkController::class, "getDrinks" ]);
 Route::get( "/drink", [ DrinkController::class, "getDrink" ]);
 Route::post( "/newdrink", [ DrinkController::class, "create" ]);
-Route::put( "/updateDrink{id}", [ DrinkController::class, "update" ]);
+Route::put( "/updatedrink/{id}", [ DrinkController::class, "update" ]);
 Route::delete( "/deleteDrink/{id}", [ DrinkController::class, "destroy" ]);
 
 //Package
