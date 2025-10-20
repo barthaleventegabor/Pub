@@ -6,6 +6,7 @@ use App\Http\Controllers\api\DrinkSqlController;
 use App\Http\Controllers\api\DrinkBuilderController;
 use App\Http\Controllers\api\DrinkController;
 use App\Http\Controllers\api\PackageController;
+use App\Http\Controllers\api\TypeController;
 
 
 /*
@@ -34,11 +35,22 @@ Route::get('/user', function (Request $request) {
 // Route::get( "/drinkdate", [ DrinkBuilderController::class, "getDates" ]);
 // Route::get( "/palinka", [ DrinkBuilderController::class, "getPalinka" ]);
 
+
+//Drink
 Route::get( "/drinks", [ DrinkController::class, "getDrinks" ]);
 Route::get( "/drink", [ DrinkController::class, "getDrink" ]);
 Route::post( "/newdrink", [ DrinkController::class, "create" ]);
-Route::put( "/updatedrink", [ DrinkController::class, "update" ]);
+Route::put( "/updatedrink/{id}", [ DrinkController::class, "update" ]);
 Route::delete( "/deletedrink/{id}", [ DrinkController::class, "destroy" ]);
 
+//Package
 Route::get( "/packages", [ PackageController::class, "getPackages" ]);
-Route::post( "/create", [ PackageController::class, "create" ]);
+Route::post( "newpackage", [ PackageController::class, "create" ]);
+Route::put( "/updatepackage/{id}", [ PackageController::class, "update" ]);
+Route::delete( "deletepackage/{id}", [ PackageController::class, "destroy" ]);
+
+//Type
+Route::get( "/types", [ TypeController::class, "getTypes" ]);
+Route::post( "/newtype", [ TypeController::class, "create" ]);
+Route::put( "/updatetype/{id}", [ TypeController::class, "update" ]);
+Route::delete( "/deletetype/{id}", [ TypeController::class, "destroy" ]);

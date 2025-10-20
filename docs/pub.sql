@@ -49,7 +49,7 @@ VALUES
 
 INSERT INTO drinks (drink, amount, price, type_id, package_id)
 VALUES
- ('Kávé', 200, 500, 1, 1),
+ ('Kávé', 200, 500, 1, 1,),
  ('Tea', 300, 400, 2, 2),
  ('Sör', 500, 800, 3, 3),
  ('Bor', 750, 1200, 4, 4),

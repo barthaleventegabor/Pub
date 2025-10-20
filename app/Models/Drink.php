@@ -17,4 +17,14 @@ class Drink extends Model {
     // const CREATED_AT = "más_név";
     // const UPDATED_AT = "más_név";
     // public $timestamps = false;
+
+    public function type() {
+
+        return $this->belongsTo( Type::class );
+    }
+
+    public function package() {
+
+        return $this->belongsTo( Package::class );
+    }
 }

@@ -10,9 +10,9 @@ class DrinkController extends ResponseController {
 
     public function getDrinks() {
 
-        $drinks = Drink::all();
+        $drinks = Drink::with( "type", "package" )->get();
 
-        return $this->sendResponse( $drinks, "Betöltés rendben" );
+        return $this->sendResponse( $drinks, "" );
     }
 
     public function getDrink( Request $request ) {
@@ -21,7 +21,7 @@ class DrinkController extends ResponseController {
         $name = $request[ "drink" ];
         $drink = Drink::where( "drink", $name )->first();
 
-        return $this->sendResponse(  $drink, "Egy ital" );
+        return $this->sendResponse(  $drink, "" );
     }
 
     public function create( Request $request ) {
@@ -30,34 +30,47 @@ class DrinkController extends ResponseController {
         $drink->drink = $request[ "drink" ];
         $drink->amount = $request[ "amount" ];
         $drink->price = $request[ "price" ];
-        $drink->type_id = $request[ "type_id" ];
-        $drink->package_id = $request[ "package_id" ];
+        $drink->type_id = ( new TypeController )->getTypeId( $request[ "type" ]);
+        $drink->package_id = ( new PackageController )->getPackageId( $request[ "package" ]);
 
         $drink->save();
 
         return $this->sendResponse( $drink, "Sikeres kiírás" );
     }
 
-    public function update( Request $request ) {
+    public function update( Request $request, $id ) {
 
-        $drink = Drink::find( $request[ "id" ]);
+        $drink = Drink::find( $id );
+        if( is_null( $drink )) {
 
-        $drink->drink = $request[ "drink" ];
-        $drink->amount = $request[ "amount" ];
-        $drink->price = $request[ "price" ];
-        $drink->type_id = $request[ "type_id" ];
-        $drink->package_id = $request[ "package_id" ];
+            return $this->sendError( "Nem végrehajtható", "Nincs ilyen rekord", 405 );
 
-        $drink->update();
+        }else {
 
-        return $this->sendResponse( $drink, "Sikeres frissítés" );
+            $drink->drink = $request[ "drink" ];
+            $drink->amount = $request[ "amount" ];
+            $drink->price = $request[ "price" ];
+            $drink->type_id = ( new TypeController )->getTypeId( $request[ "type" ]);
+            $drink->package_id = ( new PackageController )->getPackageId( $request[ "package" ]);
+
+            $drink->update();
+
+            return $this->sendResponse( $drink, "Sikeres frissítés" );
+        }
     }
 
     public function destroy( $id ) {
 
         $drink = Drink::find( $id );
-        $success = $drink->delete();
+        if( is_null( $drink )) {
 
-        return $this->sendResponse( $drink, "Sikeres törlés" );
+            return $this->sendError( "Nem végrehajtható", "Nincs ilyen rekord", 405 );
+
+        }else {
+
+            $drink->delete();
+
+            return $this->sendResponse( $drink, "Sikeres törlés" );
+        }
     }
 }
