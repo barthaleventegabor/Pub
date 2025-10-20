@@ -10,7 +10,7 @@ class DrinkController extends ResponseController {
 
     public function getDrinks() {
 
-        $drinks = Drink::all();
+        $drinks = Drink::with("type","package")->get();
 
         return $this->sendResponse($drinks, "Betöltés rendben");
     }
@@ -30,34 +30,47 @@ class DrinkController extends ResponseController {
         $drink->drink = $request[ "drink" ];
         $drink->amount = $request[ "amount" ];
         $drink->price = $request[ "price" ];
-        $drink->type_id = $request[ "type_id" ];
-        $drink->package_id = $request[ "package_id" ];
+        $drink->type_id = (new TypeController)->getTypeId($request["type"]);
+        $drink->package_id  = (new PackageController)->getPackageId($request["package"]);
 
         $drink->save();
 
         return $this->sendResponse($drink,"Sikeres kiírás");
+
     }
 
-    public function update( Request $request ) {
+    public function update( Request $request, $id ) {
 
-        $drink = Drink::find( $request[ "id" ]);
+        $drink = Drink::find("id");
 
-        $drink->drink = $request[ "drink" ];
-        $drink->amount = $request[ "amount" ];
-        $drink->price = $request[ "price" ];
-        $drink->type_id = $request[ "type_id" ];
-        $drink->package_id = $request[ "package_id" ];
+        if (is_null($drink)) {
+            return $this->sendError("Nem végrehajtható","Nincs ilyen rekord",405);
+        }else{
+            $drink->drink = $request[ "drink" ];
+            $drink->amount = $request[ "amount" ];
+            $drink->price = $request[ "price" ];
+            $drink->type_id = $request[ "type_id" ];
+            $drink->package_id = $request[ "package_id" ];
 
-        $drink->update();
+            $drink->update();
 
-        return $this->sendResponse($drink,"Sikeres frissítés");
+            return $this->sendResponse($drink,"Sikeres frissítés");
+        }
+
+
     }
 
     public function destroy( $id ) {
 
-        $drink = Drink::find( $id );
-        $success = $drink->delete();
+        $drink = Drink::find("id");
 
-        return $this->sendResponse($drink,"Sikeres törlés");
+        if (is_null($drink)) {
+            return $this->sendError("Nem végrehajtható","Nincs ilyen rekord",405);
+        }else{
+
+            $drink->delete();
+
+            return $this->sendResponse($drink,"Sikeres törlés");
+        }
     }
 }
