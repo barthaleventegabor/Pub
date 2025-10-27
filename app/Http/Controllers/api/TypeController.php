@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Type;
+use App\Http\Requests\TypeRequest;
 
 class TypeController extends ResponseController {
 
@@ -15,7 +16,9 @@ class TypeController extends ResponseController {
         return $this->sendResponse( $types );
     }
 
-    public function create( Request $request ) {
+    public function create( TypeRequest $request ) {
+
+        $request->validated();
 
         $type = new Type;
         $type->type = $request[ "type" ];
@@ -25,7 +28,9 @@ class TypeController extends ResponseController {
         return $this->sendResponse( $type, "Sikeres írás" );
     }
 
-    public function update( Request $request, $id ) {
+    public function update( TypeRequest $request, $id ) {
+
+        $request->validated();
 
         $type = Type::find( $id );
         if( is_null( $type )) {

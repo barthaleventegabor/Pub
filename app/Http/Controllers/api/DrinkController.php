@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Drink;
+use App\Http\Requests\DrinkRequest;
+use App\Http\Resources\DrinkResource;
 
 class DrinkController extends ResponseController {
 
@@ -12,7 +14,7 @@ class DrinkController extends ResponseController {
 
         $drinks = Drink::with( "type", "package" )->get();
 
-        return $this->sendResponse( $drinks, "" );
+        return $this->sendResponse( DrinkResource::collection( $drinks ), "" );
     }
 
     public function getDrink( Request $request ) {
@@ -21,10 +23,12 @@ class DrinkController extends ResponseController {
         $name = $request[ "drink" ];
         $drink = Drink::where( "drink", $name )->first();
 
-        return $this->sendResponse(  $drink, "" );
+        return $this->sendResponse( ( new DrinkResource( $drink )), "" );
     }
 
-    public function create( Request $request ) {
+    public function create( DrinkRequest $request ) {
+
+        $request->validated();
 
         $drink = new Drink;
         $drink->drink = $request[ "drink" ];
@@ -38,7 +42,9 @@ class DrinkController extends ResponseController {
         return $this->sendResponse( $drink, "Sikeres kiírás" );
     }
 
-    public function update( Request $request, $id ) {
+    public function update( DrinkRequest $request, $id ) {
+
+        $request->validated();
 
         $drink = Drink::find( $id );
         if( is_null( $drink )) {
