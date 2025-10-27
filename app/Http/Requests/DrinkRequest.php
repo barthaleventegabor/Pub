@@ -64,7 +64,7 @@ class DrinkRequest extends FormRequest
 
             "package.required" =>"Mező elvárt",
             "package.alpha_num" =>"Csak betűk és számok lehetnek",
-            "package.between" => "Túl sok vagy kevés karakter",
+            "package.between" => "Túl kevés vagy sok  karakter",
 
 
         ];
