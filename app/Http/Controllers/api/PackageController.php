@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Package;
+use App\Http\Requests\PackageRequest;
 
 class PackageController extends ResponseController {
 
@@ -15,8 +16,8 @@ class PackageController extends ResponseController {
         return $this->sendResponse($packages);
     }
 
-    public function create( Request $request ) {
-
+    public function create( PackageRequest $request ) {
+        $request->validated();
         $package = new Package;
         $package->package = $request[ "package" ];
 
@@ -25,7 +26,8 @@ class PackageController extends ResponseController {
         return $this->sendResponse($package, "Sikeres írás");
     }
 
-    public function update( Request $request,$id ) {
+    public function update( PackageRequest $request,$id ) {
+        $request->validated();
         $package  = Package::find($id);
         
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Drink;
+use App\Http\Requests\DrinkRequest;
+use App\Http\Resources\DrinkResource;
 
 class DrinkController extends ResponseController {
 
@@ -12,20 +14,22 @@ class DrinkController extends ResponseController {
 
         $drinks = Drink::with("type","package")->get();
 
-        return $this->sendResponse($drinks, "Betöltés rendben");
+        return $this->sendResponse(DrinkResource::collection($drinks),"");
     }
 
     public function getDrink( Request $request ) {
 
         //$ip = $request->ip();
         $name = $request[ "drink" ];
-        $drink = Drink::where( "drink", $name )->get();
+        $drink = Drink::where( "drink", $name )->first();
 
-        return $this->sendResponse($drink, "Egy ital");
+        return $this->sendResponse((new DrinkResource($drink)), "");
     }
 
-    public function create( Request $request ) {
+    public function create( DrinkRequest $request ) {
 
+
+        $request->validated();
         $drink = new Drink;
         $drink->drink = $request[ "drink" ];
         $drink->amount = $request[ "amount" ];
@@ -39,7 +43,9 @@ class DrinkController extends ResponseController {
 
     }
 
-    public function update( Request $request, $id ) {
+    public function update( DrinkRequest $request, $id ) {
+
+        $request->validated();
 
         $drink = Drink::find($id);
 
@@ -63,15 +69,18 @@ class DrinkController extends ResponseController {
 
     public function destroy( $id ) {
 
-        $drink = Drink::find("id");
+        $drink = Drink::find( $id );
+        if( is_null( $drink )) {
 
-        if (is_null($drink)) {
-            return $this->sendError("Nem végrehajtható","Nincs ilyen rekord",405);
-        }else{
+            return $this->sendError( "Nem végrehajtható", "Nincs ilyen rekord", 405 );
+
+        }else {
 
             $drink->delete();
 
-            return $this->sendResponse($drink,"Sikeres törlés");
+            return $this->sendResponse( $drink, "Sikeres törlés" );
         }
     }
+
+
 }
