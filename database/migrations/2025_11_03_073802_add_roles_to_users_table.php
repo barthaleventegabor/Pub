@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer("role")->after("password");
-            $table->integer("counter")->after("role");
-            $table->integer("status")->after("counter");
+            $table->integer("role")->after("password")->default(3);
+            $table->integer("counter")->after("role")->default(0);
+            $table->integer("status")->after("counter")->default(1);
             $table->timestamp("banning")->after("status")->nullable();
             
         });
