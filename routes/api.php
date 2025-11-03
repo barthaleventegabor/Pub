@@ -7,6 +7,8 @@ use App\Http\Controllers\api\DrinkBuilderController;
 use App\Http\Controllers\api\DrinkController;
 use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\TypeController;
+use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\AdminController;
 
 
 /*
@@ -54,3 +56,12 @@ Route::get( "/types", [ TypeController::class, "getTypes" ]);
 Route::post( "/newtype", [ TypeController::class, "create" ]);
 Route::put( "/updatetype/{id}", [ TypeController::class, "update" ]);
 Route::delete( "/deletetype/{id}", [ TypeController::class, "destroy" ]);
+
+//User
+Route::post( "/register", [ UserController::class, "register" ]);
+
+//Admin
+Route::get( "/users", [ AdminController::class, "getUsers" ]);
+Route::get( "/addadmin/{id}", [ AdminController::class, "setAdminRole" ]);
+Route::get( "/deladmin/{id}", [ AdminController::class, "delAdminRole" ]);
+Route::post( "newuser/{role?}", [ AdminController::class, "newUser" ]);

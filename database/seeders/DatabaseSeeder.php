@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             [
                 TypeSeeder::class,
                 PackageSeeder::class,
-                DrinkSeeder::class
+                DrinkSeeder::class,
+                AdminSeeder::class,
             ]
         );
     }
