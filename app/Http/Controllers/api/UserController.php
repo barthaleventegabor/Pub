@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Http\Controllers\api\ResponseController;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class UserController extends ResponseController
 {
@@ -27,10 +30,40 @@ class UserController extends ResponseController
 
         return $this->sendResponse($user->name,"Sikeres regisztráció");
     }
-    public function login(){
+    public function login(LoginRequest $request){
+        $request->validated();
 
+        if(Auth::attempt(["name"=>$request["name"],"password"=>$request["password"]])){
+
+            $actualTime = Carbon::now()->addHour();
+            $authUser = Auth::user();
+            (new BannerController)->resetLoginCounter($authUser->id);
+            (new BannerController)->resetBanningTime($authUser->id);
+            
+            // $token = $authUser->createToken($authUser->name . "Token")->plainTextToken;   
+            $data = [
+                "name" => $authUser->name,
+                // "token" => $token,
+                
+            ];
+            // return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
+            return $actualTime;
+            
+        }else{
+            $counter = (new BannerController)->getLoginCounter($request["name"]);
+            if($counter < 3){
+                (new BannerController)->setLoginCounter($request["name"]);
+            }else{
+                (new BannerController)->setBanningTime($request["name"]);
+            }
+
+            return $this->sendError("Autentikációs hiba",["Felhasználónev vagy jelszó nem megfelelő"],401);
+        }
     }
     public function logout(){
-
+        $user = auth("sanctum")->user();
+        $name = $user->name;
+        $user->currentAccessToken()->delete();
+        return $this->sendResponse(["name"=>$name,"message"=>"Sikeres kijelentkezés"]);
     }
 }

@@ -56,9 +56,15 @@ Route::put("/updatetype/{id}", [TypeController::class, "update"]);
 Route::delete("/deletetype/{id}", [TypeController::class, "destroy"]);
 
 //Admin
-Route::post("/register", [UserController::class,"register"]);
+
 Route::get("/users", [AdminController::class,"getusers"]);
 Route::get("/addadmin/{id}",[AdminController::class, "setAdminRole"]);
 Route::get("/deladmin/{id}",[AdminController::class, "delAdminRole"]);
 Route::post("/newuser/{role?}", [AdminController::class, "newUser"]);
+Route::put("/setpassword/{id}",[AdminController::class, "setPassword"]);
+Route::get("/token", [AdminController::class, "getTokens"]);
 
+//User
+Route::post("/login", [UserController::class,"login"]);
+Route::post("/register", [UserController::class,"register"]);
+Route::post("/logout", [UserController::class,"logout"]);
