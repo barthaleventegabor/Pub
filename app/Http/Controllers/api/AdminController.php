@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends ResponseController {
 
@@ -53,7 +54,7 @@ class AdminController extends ResponseController {
 
     public function update( Request $request ) {
 
-        $response->validate([
+        $request->validate([
             "name" => [ "required", "between:3,6", "unique:users,name", "doesnt_start_with:_" ],
             "email" => [ "required", "email", "unique:users,email" ]
             ],
@@ -67,6 +68,23 @@ class AdminController extends ResponseController {
                 "email.unique" => "Létező email cím",
             ]
         );
+    }
+
+    public function setPassword( Request $request, $id ) {
+
+        $user = User::find( $id );
+        $user->password = bcrypt( $request[ "password" ]);
+
+        $user->update();
+
+        return this->sendResponse([ "user" => $user, "message" => "Jelszó sikeresen megváltozott" ]);
+    }
+
+    public function getTokens() {
+
+        $token = DB::table( "personal_access_tokens" )->select( "name", "token" )->get();
+
+        return $this->sendResponse([ "token" => $token ], "" );
     }
 
     public function destroy() {
