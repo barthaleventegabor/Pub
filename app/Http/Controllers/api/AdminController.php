@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\DB;
-class AdminController extends ResponseController
+use App\Traits\ResponseTrait;
+class AdminController extends Controller
 {
+    use ResponseTrait;
     public function getUsers() {
         $users = User::all();
         return $this->sendResponse($users,"");

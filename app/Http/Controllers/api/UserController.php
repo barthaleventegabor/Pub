@@ -10,65 +10,62 @@ use App\Http\Controllers\api\ResponseController;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Traits\BanningTrait;
+use App\Traits\ResponseTrait;
+use App\Traits\LoginTrait;
 
-class UserController extends ResponseController
+class UserController extends Controller
 {
-    public function register(RegisterRequest $request){
-        $request->validated();
+    use ResponseTrait,BanningTrait,LoginTrait;
 
-        // $user = User::create([
-        //     "name"=>$request["name"],
-        //     "email"=>$request["email"],
-        //     "password"=>$request["password"]
-        // ]);
+    public function register(RegisterRequest $request){
+        $validated = $request->validated();
 
         $user = new User();
-        $user->name = $request["name"];
-        $user->email = $request["email"];
-        $user->password = bcrypt($request["password"]);
+        $user->name = $validated["name"];
+        $user->email = $validated["email"];
+        $user->password = bcrypt($validated["password"]);
 
         $user->save();
 
         return $this->sendResponse($user->name,"Sikeres regisztráció");
     }
     public function login(LoginRequest $request){
-        $request->validated();
+
+        $validated = $request->validated();
 
         if(Auth::attempt(["name"=>$request["name"],"password"=>$request["password"]])){
 
             
             $actualTime = Carbon::now()->addHour();
             $authUser = Auth::user();
-            $banningTime = (new BannerController)->getBanningTime($authUser->id);
+            $banningTime = $authUser->banning;
             if($banningTime < $actualTime){
     
-                (new BannerController)->resetLoginCounter($authUser->id);
-                (new BannerController)->resetBanningTime($authUser->id);
-                
-                // $token = $authUser->createToken($authUser->name . "Token")->plainTextToken;   
-                $data = [
-                    "name" => $authUser->name,
-                    // "token" => $token,
-                    
-                ];
-                // return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
-                // return $actualTime;
+                $this->resetLoginCounter($authUser);
+                $this->resetBanningTime($authUser);
+                $data = $this->createToken($authUser);
+
                 return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
                 }
             else{
                 return $this->sendError("Tiltott belépés",["A következő lehetőség:  ".$banningTime],423);
             }
         }else{
-                $counter = (new BannerController)->getLoginCounter($request["name"]);
+            if($this->checkUser($validated["name"])){
+                $counter = $this->getLoginCounter($validated["name"]);
                 if($counter < 3){
-                    (new BannerController)->setLoginCounter($request["name"]);
+                    $this->setLoginCounter($validated["name"]);
                 }else{
-                    (new BannerController)->setBanningTime($request["name"]);
+                    $this->setBanningTime($validated["name"]);
                 }   
+            }
 
             return $this->sendError("Autentikációs hiba",["Felhasználónev vagy jelszó nem megfelelő"],401);
         }
     }
+
+    
     public function logout(){
         $user = auth("sanctum")->user();
         $name = $user->name;
