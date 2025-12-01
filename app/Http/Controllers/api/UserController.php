@@ -9,8 +9,12 @@ use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Traits\BanningTrait;
+use App\Traits\ResponseTrait;
 
-class UserController extends ResponseController {
+class UserController extends Controller {
+
+    use BanningTrait, ResponseTrait;
 
     public function register( RegisterRequest $request ) {
 
@@ -34,38 +38,50 @@ class UserController extends ResponseController {
 
     public function login( LoginRequest $request ) {
 
+        
         $request->validated();
 
         if( Auth::attempt([ "name" => $request[ "name" ], "password" => $request[ "password" ]])){
 
             $actualTime = Carbon::now()->addHour();
             $authUser = Auth::user();
-            ( new BannerController )->resetLoginCounter( $authUser->id );
-            ( new BannerController )->resetBannedTime( $authUser->id );
+            $banningTime = $authUser->banning;
+            
+            if( $actualTime > $banningTime ) {
 
-            //$token = $authUser->createToken( $authUser->name . "Token" )->plainTextToken;
-
-            $data = [
+                $this->resetLoginCounter( $authUser );
+                $this->resetBannedTime( $authUser );
+                //$token = $authUser->createToken( $authUser->name . "Token" )->plainTextToken;
+                $data = [
                 "name" => $authUser->name,
                 //"token" => $token,
-            ];
-            return $actualTime;
-            //return $this->sendResponse([ "data" => $data, "message" => "Sikeres bejelentkezés" ]);
+                ];
 
+                return $this->sendResponse([ "data" => $data, "message" => "Sikeres bejelentkezés" ]);
+            
+            }else {
+
+                return $this->sendError( "Tiltott belépés", [ "Következő lehetőség:", $banningTime ], 423 );
+            }
         } else {
 
-            $counter = ( new BannerController )->getLoginCounter( $request[ "name" ]);
+            $counter = $this->getLoginCounter( $request[ "name" ]);
             if( $counter < 3 ){
 
-                ( new BannerController )->setLoginCounter( $request[ "name" ]);
+                $this->setLoginCounter( $request[ "name" ]);
 
             }else {
 
-                ( new BannerController )->setBannedTime( $request[ "name" ]);
+                $this->setBannedTime( $request[ "name" ]);
             }
 
             return $this->sendError( "Autentikációs hiba", [ "Felhasználónév vagy jelszó nem megfelelő" ], 401 );
         }
+    }
+
+    private function loginError( $name ) {
+
+
     }
 
     public function logout() {

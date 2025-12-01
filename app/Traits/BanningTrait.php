@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Traits;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 
-class BannerController extends Controller {
-
+trait BanningTrait {
+    
     public function getLoginCounter( $name ) {
 
         $user = User::where( "name", $name )->first();
@@ -22,19 +20,10 @@ class BannerController extends Controller {
        User::where( "name", $name )->increment( "counter" );
     }
 
-    public function resetLoginCounter( $id ) {
+    public function resetLoginCounter( $user ) {
 
-        $user = User::find( $id );
         $user->counter = 0;
-
         $user->update();
-    }
-
-    public function getBannedTime( $id ) {
-
-        $time = User::find( $id )->banning;
-
-        return $time;
     }
 
     public function setBannedTime( $name ) {
@@ -45,11 +34,9 @@ class BannerController extends Controller {
         $user->update();
     }
 
-    public function resetBannedTime( $id ) {
+    public function resetBannedTime( $user ) {
 
-        $user = User::find( $id );
         $user->banning = null;
-
         $user->update();
     }
 }

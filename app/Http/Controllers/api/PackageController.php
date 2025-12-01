@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Package;
 use App\Http\Requests\PackageRequest;
+use App\Traits\ResponseTrait;
 
-class PackageController extends ResponseController {
+class PackageController extends Controller {
+
+    use ResponseTrait;
 
     public function getPackages() {
 

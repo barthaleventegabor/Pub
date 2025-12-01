@@ -1,12 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Traits;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-class ResponseController extends Controller {
-
+trait ResponseTrait {
+    
     public function sendResponse( $data, $message = "" ) {
 
         $response = [

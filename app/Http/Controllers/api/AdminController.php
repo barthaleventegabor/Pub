@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ResponseTrait;
 
-class AdminController extends ResponseController {
+class AdminController extends Controller {
 
+    use ResponseTrait;
+    
     public function getUsers() {
 
         $users = User::all();
