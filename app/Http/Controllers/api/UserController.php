@@ -26,6 +26,7 @@ class UserController extends ResponseController
         $user->name = $request["name"];
         $user->email = $request["email"];
         $user->password = bcrypt($request["password"]);
+
         $user->save();
 
         return $this->sendResponse($user->name,"Sikeres regisztráció");
@@ -35,30 +36,35 @@ class UserController extends ResponseController
 
         if(Auth::attempt(["name"=>$request["name"],"password"=>$request["password"]])){
 
+            
             $actualTime = Carbon::now()->addHour();
             $authUser = Auth::user();
-            (new BannerController)->resetLoginCounter($authUser->id);
-            (new BannerController)->resetBanningTime($authUser->id);
-            
-            // $token = $authUser->createToken($authUser->name . "Token")->plainTextToken;   
-            $data = [
-                "name" => $authUser->name,
-                // "token" => $token,
+            $banningTime = (new BannerController)->getBanningTime($authUser->id);
+            if($banningTime < $actualTime){
+    
+                (new BannerController)->resetLoginCounter($authUser->id);
+                (new BannerController)->resetBanningTime($authUser->id);
                 
-            ];
-            // return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
-            return $actualTime;
-            
-        }else{
-            $counter = (new BannerController)->getLoginCounter($request["name"]);
-            if($counter < 3){
-                (new BannerController)->setLoginCounter($request["name"]);
+                // $token = $authUser->createToken($authUser->name . "Token")->plainTextToken;   
+                $data = [
+                    "name" => $authUser->name,
+                    // "token" => $token,
+                    
+                ];
+                // return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
+                // return $actualTime;
+                return $banningTime;
+                }
             }else{
-                (new BannerController)->setBanningTime($request["name"]);
-            }
+                $counter = (new BannerController)->getLoginCounter($request["name"]);
+                if($counter < 3){
+                    (new BannerController)->setLoginCounter($request["name"]);
+                }else{
+                    (new BannerController)->setBanningTime($request["name"]);
+                }
 
-            return $this->sendError("Autentikációs hiba",["Felhasználónev vagy jelszó nem megfelelő"],401);
-        }
+                return $this->sendError("Autentikációs hiba",["Felhasználónev vagy jelszó nem megfelelő"],401);
+            }
     }
     public function logout(){
         $user = auth("sanctum")->user();

@@ -26,6 +26,12 @@ class BannerController extends Controller
         $user->update();
     }
 
+    public function getBanningTime($id){
+
+        $time = User::find($id)->banning;
+        return $time;
+    }
+
     public function setBanningTime($name){
         $user = User::where("name", $name)->first();
             
