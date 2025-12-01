@@ -53,18 +53,21 @@ class UserController extends ResponseController
                 ];
                 // return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
                 // return $actualTime;
-                return $banningTime;
+                return $this->sendResponse(["data"=>$data,"message"=>"Sikeres bejelentkezés"]);
                 }
-            }else{
+            else{
+                return $this->sendError("Tiltott belépés",["A következő lehetőség:  ".$banningTime],423);
+            }
+        }else{
                 $counter = (new BannerController)->getLoginCounter($request["name"]);
                 if($counter < 3){
                     (new BannerController)->setLoginCounter($request["name"]);
                 }else{
                     (new BannerController)->setBanningTime($request["name"]);
-                }
+                }   
 
-                return $this->sendError("Autentikációs hiba",["Felhasználónev vagy jelszó nem megfelelő"],401);
-            }
+            return $this->sendError("Autentikációs hiba",["Felhasználónev vagy jelszó nem megfelelő"],401);
+        }
     }
     public function logout(){
         $user = auth("sanctum")->user();
