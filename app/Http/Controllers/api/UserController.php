@@ -11,25 +11,20 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Traits\BanningTrait;
 use App\Traits\ResponseTrait;
+use App\Traits\LoginTrait;
 
 class UserController extends Controller {
 
-    use BanningTrait, ResponseTrait;
+    use BanningTrait, ResponseTrait, LoginTrait;
 
     public function register( RegisterRequest $request ) {
 
-        $request->validated();
-
-        // $user = User::create([
-        //     "name" => $request[ "name" ],
-        //     "email" => $request[ "email" ],
-        //     "password" => $request[ "password" ]
-        // ]);
+        $validated = $request->validated();
 
         $user = new User();
-        $user->name = $request[ "name" ];
-        $user->email = $request[ "email" ];
-        $user->password = bcrypt( $request[ "password" ]);
+        $user->name = $validated[ "name" ];
+        $user->email = $validated[ "email" ];
+        $user->password = bcrypt( $validated[ "password" ]);
 
         $user->save();
 
@@ -39,23 +34,18 @@ class UserController extends Controller {
     public function login( LoginRequest $request ) {
 
         
-        $request->validated();
+        $validated = $request->validated();
 
-        if( Auth::attempt([ "name" => $request[ "name" ], "password" => $request[ "password" ]])){
+        if( Auth::attempt([ "name" => $validated[ "name" ], "password" => $validated[ "password" ]])){
 
             $actualTime = Carbon::now()->addHour();
             $authUser = Auth::user();
-            $banningTime = $authUser->banning;
             
-            if( $actualTime > $banningTime ) {
+            if( $actualTime > $authUser->banning ) {
 
                 $this->resetLoginCounter( $authUser );
                 $this->resetBannedTime( $authUser );
-                //$token = $authUser->createToken( $authUser->name . "Token" )->plainTextToken;
-                $data = [
-                "name" => $authUser->name,
-                //"token" => $token,
-                ];
+                $data = $this->createToken( $authUser );
 
                 return $this->sendResponse([ "data" => $data, "message" => "Sikeres bejelentkezés" ]);
             
@@ -65,23 +55,21 @@ class UserController extends Controller {
             }
         } else {
 
-            $counter = $this->getLoginCounter( $request[ "name" ]);
-            if( $counter < 3 ){
+            if( $this->checkUser( $validated[ "name" ]) ) {
 
-                $this->setLoginCounter( $request[ "name" ]);
+                $counter = $this->getLoginCounter( $validated[ "name" ]);
+                if( $counter < 3 ){
 
-            }else {
+                    $this->setLoginCounter( $validated[ "name" ]);
 
-                $this->setBannedTime( $request[ "name" ]);
+                }else {
+
+                    $this->setBannedTime( $validated[ "name" ]);
+                }
             }
-
+            
             return $this->sendError( "Autentikációs hiba", [ "Felhasználónév vagy jelszó nem megfelelő" ], 401 );
         }
-    }
-
-    private function loginError( $name ) {
-
-
     }
 
     public function logout() {
