@@ -9,26 +9,31 @@ use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Traits\BanningTrait;
+use App\Services\BanningService;
+use App\Services\RegisterService;
+use App\Services\TokenService;
 use App\Traits\ResponseTrait;
-use App\Traits\LoginTrait;
 
 class UserController extends Controller {
 
-    use BanningTrait, ResponseTrait, LoginTrait;
+    use ResponseTrait;
+
+    protected BanningService $banningService;
+    protected RegisterService $registerService;
+    protected TokenService $tokenService;
+
+    public function __construct( BanningService $banning, RegisterService $registerService, TokenService $tokenService ) {
+
+        $this->banningService = $banning;
+        $this->registerService = $registerService;
+        $this->tokenService = $tokenService;
+    }
 
     public function register( RegisterRequest $request ) {
 
         $validated = $request->validated();
 
-        $user = new User();
-        $user->name = $validated[ "name" ];
-        $user->email = $validated[ "email" ];
-        $user->password = bcrypt( $validated[ "password" ]);
-
-        $user->save();
-
-        return $this->sendResponse( $user->name, "Sikeres regisztáció" );
+        return $this->registerService->create( $validated );
     }
 
     public function login( LoginRequest $request ) {
@@ -43,28 +48,33 @@ class UserController extends Controller {
             
             if( $actualTime > $authUser->banning ) {
 
-                $this->resetLoginCounter( $authUser );
-                $this->resetBannedTime( $authUser );
-                $data = $this->createToken( $authUser );
+                $this->banningService->resetLoginCounter( $authUser );
+                $this->banningService->resetBannedTime( $authUser );
+                $token = $this->tokenService->generateToken( $authUser );
 
-                return $this->sendResponse([ "data" => $data, "message" => "Sikeres bejelentkezés" ]);
+                $response =  [
+
+                    "name" => $authUser->name,
+                    "token" => $token,
+                ];
+                return $this->sendResponse([ $response, "message" => "Sikeres bejelentkezés" ]);
             
             }else {
 
-                return $this->sendError( "Tiltott belépés", [ "Következő lehetőség:", $banningTime ], 423 );
+                return $this->sendError( "Tiltott belépés", [ "Következő lehetőség:", $authUser->banning ], 423 );
             }
         } else {
 
             if( $this->checkUser( $validated[ "name" ]) ) {
 
-                $counter = $this->getLoginCounter( $validated[ "name" ]);
+                $counter = $this->banningService->getLoginCounter( $validated[ "name" ]);
                 if( $counter < 3 ){
 
-                    $this->setLoginCounter( $validated[ "name" ]);
+                    $this->banningService->setLoginCounter( $validated[ "name" ]);
 
                 }else {
 
-                    $this->setBannedTime( $validated[ "name" ]);
+                    $this->banningService->setBannedTime( $validated[ "name" ]);
                 }
             }
             
@@ -75,10 +85,7 @@ class UserController extends Controller {
     public function logout() {
 
         $user = auth( "sanctum" )->user();
-        $name = $user->name;
-
-        $user->currentAccessToken()->delete();
-
-        return $this->sendResponse([ "name" => $name, "Sikeres kijelentkezés" ]);
+        
+        return $success = $this->tokenService->deleteToken( $user );
     }
 }

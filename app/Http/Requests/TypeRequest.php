@@ -25,7 +25,7 @@ class TypeRequest extends FormRequest
     {
         return [
             "type" => [
-                "required", "alpha_num", "between:3,15", "unique:packages"
+                "required", "alpha_num", "between:3,15", "unique:types"
             ],
         ];
     }

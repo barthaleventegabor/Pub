@@ -3,12 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 use App\Http\Controllers\api\ResponseController;
 
-class DrinkRequest extends FormRequest
-{
+class DrinkRequest extends BaseRequest {
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -43,39 +41,5 @@ class DrinkRequest extends FormRequest
             ],
 
         ];
-    }
-
-    public function messages() {
-
-        return [
-            "drink.required" => "Mező elvárt",
-            "drink.alpha_num" => "Csak betűk és számok lehetnek",
-            "drink.between" => "Túl kevés vagy sok karakter",
-            "drink.unique" => "Van ilyen adat",
-
-            "amount.required" => "Mező elvárt",
-            "amount.max_digits" => "Túl nagy szám",
-
-            "price.required" => "Mező elvárt",
-            "price.numeric" => "Csak szám lehet",
-
-            "type.required" => "Mező elvárt",
-            "type.alpha_num" => "Csak betűk és számok lehetnek",
-            "type.between" => "Túl kevés vagy sok karakter",
-
-            "package.required" => "Mező elvárt",
-            "package.alpha_num" => "Csak betűk és számok lehetnek",
-            "package.between" => "Túl kevés vagy sok karakter"
-        ];
-    }
-
-    public function failedValidation( Validator $validator ) {
-
-        throw new HttpResponseException( response()->json([
-
-            "success" => false,
-            "message" => "Adatbeviteli hiba",
-            "data" => $validator->errors()
-        ]));
     }
 }

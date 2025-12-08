@@ -37,35 +37,49 @@ Route::get('/user', function (Request $request) {
 // Route::get( "/drinkdate", [ DrinkBuilderController::class, "getDates" ]);
 // Route::get( "/palinka", [ DrinkBuilderController::class, "getPalinka" ]);
 
+Route::group([ "middleware" => [ "auth:sanctum" ]], function() {
+    //Drink
+    Route::post( "/newdrink", [ DrinkController::class, "create" ]);
+    Route::put( "/updatedrink/{id}", [ DrinkController::class, "update" ]);
+    Route::delete( "/deletedrink/{id}", [ DrinkController::class, "destroy" ]);
 
+    //Package
+    Route::post( "newpackage", [ PackageController::class, "create" ]);
+    Route::put( "/updatepackage/{id}", [ PackageController::class, "update" ]);
+    Route::delete( "deletepackage/{id}", [ PackageController::class, "destroy" ]);
+
+    //Type
+    Route::post( "/newtype", [ TypeController::class, "create" ]);
+    Route::put( "/updatetype/{id}", [ TypeController::class, "update" ]);
+    Route::delete( "/deletetype/{id}", [ TypeController::class, "destroy" ]);
+
+    //User
+    Route::post( "/logout", [ UserController::class, "logout" ]);
+
+    //Admin
+    Route::get( "/users", [ AdminController::class, "getUsers" ]);
+    Route::get( "/addadmin/{id}", [ AdminController::class, "setAdminRole" ]);
+    Route::get( "/deladmin/{id}", [ AdminController::class, "delAdminRole" ]);
+    Route::post( "/newuser/{role?}", [ AdminController::class, "newUser" ]);
+    Route::put( "/setpassword/{id}", [ AdminController::class, "setPassword" ]);
+    Route::get( "/token", [ AdminController::class, "getTokens" ]);
+});
+// Route::get( "/users", [ AdminController::class, "getUsers" ]);
+// Route::get( "/token", [ AdminController::class, "getTokens" ]);
+// Route::post( "/newdrink", [ DrinkController::class, "create" ]);
 //Drink
 Route::get( "/drinks", [ DrinkController::class, "getDrinks" ]);
 Route::get( "/drink", [ DrinkController::class, "getDrink" ]);
-Route::post( "/newdrink", [ DrinkController::class, "create" ]);
-Route::put( "/updatedrink/{id}", [ DrinkController::class, "update" ]);
-Route::delete( "/deletedrink/{id}", [ DrinkController::class, "destroy" ]);
 
 //Package
 Route::get( "/packages", [ PackageController::class, "getPackages" ]);
-Route::post( "newpackage", [ PackageController::class, "create" ]);
-Route::put( "/updatepackage/{id}", [ PackageController::class, "update" ]);
-Route::delete( "deletepackage/{id}", [ PackageController::class, "destroy" ]);
 
 //Type
 Route::get( "/types", [ TypeController::class, "getTypes" ]);
-Route::post( "/newtype", [ TypeController::class, "create" ]);
-Route::put( "/updatetype/{id}", [ TypeController::class, "update" ]);
-Route::delete( "/deletetype/{id}", [ TypeController::class, "destroy" ]);
 
 //User
 Route::post( "/register", [ UserController::class, "register" ]);
 Route::post( "/login", [ UserController::class, "login" ]);
-Route::post( "/logout", [ UserController::class, "logout" ]);
 
-//Admin
-Route::get( "/users", [ AdminController::class, "getUsers" ]);
-Route::get( "/addadmin/{id}", [ AdminController::class, "setAdminRole" ]);
-Route::get( "/deladmin/{id}", [ AdminController::class, "delAdminRole" ]);
-Route::post( "/newuser/{role?}", [ AdminController::class, "newUser" ]);
-Route::put( "/setpassword/{id}", [ AdminController::class, "setPassword" ]);
-Route::get( "/token", [ AdminController::class, "getTokens" ]);
+
+

@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Type;
 use App\Http\Requests\TypeRequest;
+use App\Traits\ResponseTrait;
 
-class TypeController extends ResponseController {
+class TypeController extends Controller {
+
+    use ResponseTrait;
 
     public function getTypes() {
 
@@ -20,10 +23,10 @@ class TypeController extends ResponseController {
 
         $request->validated();
 
-        $type = new Type;
+        $type = new Type();
         $type->type = $request[ "type" ];
 
-        $type->save();
+        //$type->save();
 
         return $this->sendResponse( $type, "Sikeres írás" );
     }

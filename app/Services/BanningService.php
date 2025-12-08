@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Traits;
+namespace App\Services;
 
 use App\Models\User;
 use Carbon\Carbon;
 
-trait BanningTrait {
-    
+class BanningService
+{
+    public function __construct() {
+    }
+
     public function getLoginCounter( $name ) {
 
         $user = User::where( "name", $name )->first();

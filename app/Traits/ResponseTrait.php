@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\JsonResponse;
+
 trait ResponseTrait {
     
     public function sendResponse( $data, $message = "" ) {
@@ -30,5 +32,12 @@ trait ResponseTrait {
         }
 
         return response()->json( $response, $code );
+    }
+
+    protected function sendValidationError( $validatorErrors ): JsonResponse {
+
+        $error = "Adatbeviteli hiba";
+
+        return $this->sendError( $error, $validatorErrors, 422 );
     }
 }

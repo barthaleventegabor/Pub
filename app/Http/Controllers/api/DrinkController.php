@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Drink;
 use App\Http\Requests\DrinkRequest;
 use App\Http\Resources\DrinkResource;
+use App\Traits\ResponseTrait;
 
-class DrinkController extends ResponseController {
+class DrinkController extends Controller {
 
+    use ResponseTrait;
+    
     public function getDrinks() {
 
         $drinks = Drink::with( "type", "package" )->get();
