@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -25,8 +26,18 @@ class RegisterRequest extends FormRequest
         return [
             "name" => [ "required", "between:3,6", "unique:users,name", "doesnt_start_with:_"],
             "email" => [ "required", "email", "unique:users,email" ],
-            "password" => [ "required", "min:4", "regex:/[a-z]/", "regex:/[A-Z]/", "regex:/[0-9]/"],
-            "confirm_password" => [ "required", "same:password"]
+            //"password" => [ "required", "min:4", "regex:/[a-z]/", "regex:/[A-Z]/", "regex:/[0-9]/"],
+            "password" => [ "required", "confirmed",
+            Password::min( 4 )
+                      ->mixedCase()
+                      ->numbers()
+                      ->symbols()
+                      ->uncompromised()],
+            //"confirm_password" => [ "required", "same:password"]
+            "full_name" => [ "required", "max:50" ],
+            "city" => [ "required", "max:50" ],
+            "address" => [ "required", "max:100" ],
+            "phone" => [ "required", "max:20" ]
         ];
     }
 

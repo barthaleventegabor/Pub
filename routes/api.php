@@ -9,6 +9,7 @@ use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\TypeController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\AdminController;
+use App\Http\Controllers\api\ProfileController;
 
 
 /*
@@ -80,6 +81,7 @@ Route::get( "/types", [ TypeController::class, "getTypes" ]);
 //User
 Route::post( "/register", [ UserController::class, "register" ]);
 Route::post( "/login", [ UserController::class, "login" ]);
+Route::get( "/profile/{id}", [ ProfileController::class, "getProfile" ]);
 
 
 
