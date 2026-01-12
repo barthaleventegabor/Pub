@@ -40,7 +40,7 @@ class DrinkController extends Controller {
         $drink->type_id = ( new TypeController )->getTypeId( $request[ "type" ]);
         $drink->package_id = ( new PackageController )->getPackageId( $request[ "package" ]);
 
-        $drink->save();
+        //$drink->save();
 
         return $this->sendResponse( $drink, "Sikeres kiírás" );
     }
@@ -62,7 +62,7 @@ class DrinkController extends Controller {
             $drink->type_id = ( new TypeController )->getTypeId( $request[ "type" ]);
             $drink->package_id = ( new PackageController )->getPackageId( $request[ "package" ]);
 
-            $drink->update();
+            //$drink->update();
 
             return $this->sendResponse( $drink, "Sikeres frissítés" );
         }
@@ -77,7 +77,7 @@ class DrinkController extends Controller {
 
         }else {
 
-            $drink->delete();
+            //$drink->delete();
 
             return $this->sendResponse( $drink, "Sikeres törlés" );
         }

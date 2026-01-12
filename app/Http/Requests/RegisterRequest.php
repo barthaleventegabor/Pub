@@ -31,8 +31,8 @@ class RegisterRequest extends FormRequest
             Password::min( 4 )
                       ->mixedCase()
                       ->numbers()
-                      ->symbols()
-                      ->uncompromised()],
+                      ->symbols()],
+                      //->uncompromised()],
             //"confirm_password" => [ "required", "same:password"]
             "full_name" => [ "required", "max:50" ],
             "city" => [ "required", "max:50" ],

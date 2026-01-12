@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserProfile;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ResponseTrait;
@@ -24,7 +25,7 @@ class AdminController extends Controller {
 
         $user = User::find( $id );
 
-        $user->role = 2;
+        $user->role = "admin";
         $user->update();
 
         return $this->sendResponse( $user->name, "Admin jog megadva" );
@@ -34,13 +35,13 @@ class AdminController extends Controller {
 
         $user = User::find( $id );
 
-        $user->role = 3;
+        $user->role = "user";
         $user->update();
 
         return $this->sendResponse( $user->name, "Admin jog elvéve" );
     }
 
-    public function newUser( RegisterRequest $request, $role = 3 ) {
+    public function createUser( RegisterRequest $request ) {
 
         $request->validated();
 
@@ -48,9 +49,17 @@ class AdminController extends Controller {
         $user->name = $request[ "name" ];
         $user->email = $request[ "email" ];
         $user->password = bcrypt( $request[ "password" ]);
-        $user->role = $role;
+        $user->role = "user";
 
         $user->save();
+
+        $userProfile = new UserProfile();
+        $userProfile->fullname = $request[ "full_name" ];
+        $userProfile->city = $request[ "city" ];
+        $userProfile->address = $request[ "address" ];
+        $userProfile->phone = $request[ "phone" ];
+
+        $userProfile->save();
 
         return $this->sendResponse( $user->name, "Felhasználó felvéve" );
     }

@@ -8,15 +8,27 @@ use App\Traits\ResponseTrait;
 class TokenService {
 
     use ResponseTrait;
-    
-    public function __construct() {
+    protected AbilityService $abilityService;
+
+    public function __construct( AbilityService $abilityService ) {
+
+        $this->abilityService = $abilityService;
     }
 
     public function generateToken( $user ) {
 
-        $token = $user->createToken( $user->name . "Token" )->plainTextToken;
-            
-        return $token;
+        if( $user->role == "admin" ) {
+
+            return $user->createToken( $user->name . "Token", $this->abilityService->createAdminAbilities() )->plainTextToken;
+
+        }else if( $user->role == "user" ){
+
+            return $user->createToken( $user->name . "Token", $this->abilityService->createUserAbilities()  )->plainTextToken;
+        
+        }else {
+
+            return $user->createToken( $user->name . "Token" )->plainTextToken;
+        }
     }
 
     public function deleteToken( $user ) {

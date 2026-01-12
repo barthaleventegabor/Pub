@@ -23,7 +23,7 @@ class RegisterService {
         //$user->password = bcrypt( $data[ "password" ]);
         $user->password = Hash::make( $data[ "password" ]);
 
-        //$user->save();
+        $user->save();
 
         $profile = new UserProfile();
         $profile->full_name = $data[ "full_name" ];
@@ -32,7 +32,7 @@ class RegisterService {
         $profile->phone = $data[ "phone" ];
         $profile->user_id = $user->id;
 
-        //$profile->save();
+        $profile->save();
 
         return $this->sendResponse( $data, "Sikeres regisztráció." );
     }
