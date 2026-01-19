@@ -61,7 +61,7 @@ class TypeController extends Controller {
 
         }else {
 
-            $type->delete();
+            //$type->delete();
 
             return $this->sendResponse( $type, "Sikeres törlés" );
         }

@@ -20,66 +20,49 @@ class DrinkController extends Controller {
         return $this->sendResponse( DrinkResource::collection( $drinks ), "" );
     }
 
-    public function getDrink( Request $request ) {
+    public function getDrink( Drink $drink ) {
 
         //$ip = $request->ip();
-        $name = $request[ "drink" ];
-        $drink = Drink::where( "drink", $name )->first();
-
         return $this->sendResponse( ( new DrinkResource( $drink )), "" );
     }
 
     public function create( DrinkRequest $request ) {
 
-        $request->validated();
+        //Servicebe kiszervezni
+        $validated = $request->validated();
 
-        $drink = new Drink;
-        $drink->drink = $request[ "drink" ];
-        $drink->amount = $request[ "amount" ];
-        $drink->price = $request[ "price" ];
-        $drink->type_id = ( new TypeController )->getTypeId( $request[ "type" ]);
-        $drink->package_id = ( new PackageController )->getPackageId( $request[ "package" ]);
+        $drink = new Drink();
+        $drink->drink = $validated[ "drink" ];
+        $drink->amount = $validated[ "amount" ];
+        $drink->price = $validated[ "price" ];
+        $drink->type_id = ( new TypeController )->getTypeId( $validated[ "type" ]);
+        $drink->package_id = ( new PackageController )->getPackageId( $validated[ "package" ]);
 
-        //$drink->save();
+        $drink->save();
 
         return $this->sendResponse( $drink, "Sikeres kiírás" );
     }
 
-    public function update( DrinkRequest $request, $id ) {
+    public function update( DrinkRequest $request, Drink $drink ) {
 
-        $request->validated();
+        //Servicebe kivezetni
+        $validated = $request->validated();
 
-        $drink = Drink::find( $id );
-        if( is_null( $drink )) {
+        $drink->drink = $validated[ "drink" ];
+        $drink->amount = $validated[ "amount" ];
+        $drink->price = $validated[ "price" ];
+        $drink->type_id = ( new TypeController )->getTypeId( $validated[ "type" ]);
+        $drink->package_id = ( new PackageController )->getPackageId( $validated[ "package" ]);
 
-            return $this->sendError( "Nem végrehajtható", "Nincs ilyen rekord", 405 );
+        $drink->update();
 
-        }else {
-
-            $drink->drink = $request[ "drink" ];
-            $drink->amount = $request[ "amount" ];
-            $drink->price = $request[ "price" ];
-            $drink->type_id = ( new TypeController )->getTypeId( $request[ "type" ]);
-            $drink->package_id = ( new PackageController )->getPackageId( $request[ "package" ]);
-
-            //$drink->update();
-
-            return $this->sendResponse( $drink, "Sikeres frissítés" );
-        }
+        return $this->sendResponse( $drink, "Sikeres frissítés" );
     }
 
-    public function destroy( $id ) {
+    public function destroy( Drink $drink ) {
 
-        $drink = Drink::find( $id );
-        if( is_null( $drink )) {
-
-            return $this->sendError( "Nem végrehajtható", "Nincs ilyen rekord", 405 );
-
-        }else {
-
-            //$drink->delete();
-
-            return $this->sendResponse( $drink, "Sikeres törlés" );
-        }
+        $drink->delete();
+        
+        return $this->sendResponse( $drink, "Sikeres törlés" );
     }
 }

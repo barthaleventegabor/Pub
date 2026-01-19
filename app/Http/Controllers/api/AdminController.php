@@ -16,14 +16,13 @@ class AdminController extends Controller {
     
     public function getUsers() {
 
-        $users = User::all();
+        //Resourse állományt megírni
+        $users = UserProfile::with( "users" );
 
         return $this->sendResponse( $users, "" );
     }
 
-    public function setAdminRole( $id ) {
-
-        $user = User::find( $id );
+    public function setAdminRole( User $user ) {
 
         $user->role = "admin";
         $user->update();
@@ -31,9 +30,7 @@ class AdminController extends Controller {
         return $this->sendResponse( $user->name, "Admin jog megadva" );
     }
 
-    public function delAdminRole( $id ) {
-
-        $user = User::find( $id );
+    public function delAdminRole( User $user ) {
 
         $user->role = "user";
         $user->update();
@@ -43,14 +40,14 @@ class AdminController extends Controller {
 
     public function createUser( RegisterRequest $request ) {
 
-        $request->validated();
+        $validated = $request->validated();
 
         $user = new User();
-        $user->name = $request[ "name" ];
-        $user->email = $request[ "email" ];
-        $user->password = bcrypt( $request[ "password" ]);
+        $user->name = $validated[ "name" ];
+        $user->email = $validated[ "email" ];
+        $user->password = bcrypt( $validated[ "password" ]);
         $user->role = "user";
-
+        
         $user->save();
 
         $userProfile = new UserProfile();
@@ -58,6 +55,7 @@ class AdminController extends Controller {
         $userProfile->city = $request[ "city" ];
         $userProfile->address = $request[ "address" ];
         $userProfile->phone = $request[ "phone" ];
+        $userProfile->user_id = $user->id;
 
         $userProfile->save();
 
@@ -66,6 +64,7 @@ class AdminController extends Controller {
 
     public function update( Request $request ) {
 
+        //Request állományt megírni, users->password írható
         $request->validate([
             "name" => [ "required", "between:3,6", "unique:users,name", "doesnt_start_with:_" ],
             "email" => [ "required", "email", "unique:users,email" ]
@@ -82,9 +81,9 @@ class AdminController extends Controller {
         );
     }
 
-    public function setPassword( Request $request, $id ) {
+    public function setPassword( Request $request, User $user ) {
 
-        $user = User::find( $id );
+        //Request állomány
         $user->password = bcrypt( $request[ "password" ]);
 
         $user->update();

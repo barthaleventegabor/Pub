@@ -11,81 +11,55 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\AdminController;
 use App\Http\Controllers\api\ProfileController;
 
-
-/*
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-*/
-
-// Route::get( "/drinktest", [ DrinkSqlController::class, "getDrinks" ] );
-// Route::get( "/drink", [ DrinkSqlController::class, "getDrink" ] );
-// Route::get( "/adddrink", [ DrinkSqlController::class, "addDrink" ]);
-// Route::get( "/updatedrink", [ DrinkSqlController::class, "updateDrink" ]);
-// Route::get( "/deletedrink", [ DrinkSqlController::class, "deleteDrink" ]);
-// Route::get( "/alldata", [ DrinkSqlController::class, "getAllData" ]);
-// Route::get( "/drinkdata", [ DrinkSqlController::class, "getDrinkData" ]);
-
-// Route::get( "/drinktest", [ DrinkBuilderController::class, "getDrinks" ] );
-// Route::get( "/drinkselect", [ DrinkBuilderController::class, "getSelectDrinks" ] );
-// Route::get( "/drink", [ DrinkBuilderController::class, "getDrink" ] );
-// Route::get( "/adddrink", [ DrinkBuilderController::class, "addDrink" ]);
-// Route::get( "/updatedrink", [ DrinkBuilderController::class, "updateDrink" ]);
-// Route::get( "/modifydrink", [ DrinkBuilderController::class, "modifyDrink" ]);
-// Route::get( "/deletedrink/{id}", [ DrinkBuilderController::class, "deleteDrink" ]);
-// Route::get( "/alldata", [ DrinkBuilderController::class, "getAllData" ]);
-// Route::get( "/drinkdata", [ DrinkBuilderController::class, "getDrinkData" ]);
-// Route::get( "/drinkdate", [ DrinkBuilderController::class, "getDates" ]);
-// Route::get( "/palinka", [ DrinkBuilderController::class, "getPalinka" ]);
-
-Route::group([ "middleware" => [ "auth:sanctum", "abilities:admin" ]], function() {
-
-    //Drink
-    Route::post( "/newdrink", [ DrinkController::class, "create" ]);
-    Route::put( "/updatedrink/{id}", [ DrinkController::class, "update" ]);
-    Route::delete( "/deletedrink/{id}", [ DrinkController::class, "destroy" ]);
-
-    //Package
-    Route::post( "newpackage", [ PackageController::class, "create" ]);
-    Route::put( "/updatepackage/{id}", [ PackageController::class, "update" ]);
-    Route::delete( "deletepackage/{id}", [ PackageController::class, "destroy" ]);
-
-    //Type
-    Route::post( "/newtype", [ TypeController::class, "create" ]);
-    Route::put( "/updatetype/{id}", [ TypeController::class, "update" ]);
-    Route::delete( "/deletetype/{id}", [ TypeController::class, "destroy" ]);
-
-    //User
-    Route::post( "/logout", [ UserController::class, "logout" ]);
-
-    //Admin
-    Route::get( "/users", [ AdminController::class, "getUsers" ]);
-    Route::get( "/addadmin/{id}", [ AdminController::class, "setAdminRole" ]);
-    Route::get( "/deladmin/{id}", [ AdminController::class, "delAdminRole" ]);
-    Route::post( "/newuser", [ AdminController::class, "createUser" ]);
-    Route::put( "/setpassword/{id}", [ AdminController::class, "setPassword" ]);
-    Route::get( "/token", [ AdminController::class, "getTokens" ]);
-
-    //Profile
-    Route::get( "/profile/{id}", [ ProfileController::class, "getProfile" ]);
-});
-// Route::get( "/users", [ AdminController::class, "getUsers" ]);
-// Route::get( "/token", [ AdminController::class, "getTokens" ]);
-// Route::post( "/newdrink", [ DrinkController::class, "create" ]);
-//Drink
-Route::get( "/drinks", [ DrinkController::class, "getDrinks" ]);
-Route::get( "/drink", [ DrinkController::class, "getDrink" ]);
-
-//Package
-Route::get( "/packages", [ PackageController::class, "getPackages" ]);
-
-//Type
-Route::get( "/types", [ TypeController::class, "getTypes" ]);
-
 //User
 Route::post( "/register", [ UserController::class, "register" ]);
 Route::post( "/login", [ UserController::class, "login" ]);
 
+Route::middleware([ "auth:sanctum" ])->group( function() {
+    
+    //User
+    Route::post( "/logout", [ UserController::class, "logout" ]);
 
+    //Profile
+    Route::get( "/profile/{id}", [ ProfileController::class, "getProfile" ]);
+
+    Route::middleware([ "role" ])->group( function() {
+
+        //Drink
+        Route::get( "/drinks", [ DrinkController::class, "getDrinks" ]);
+        Route::get( "/drink/{drink}", [ DrinkController::class, "getDrink" ]);
+        Route::post( "/newdrink", [ DrinkController::class, "create" ]);
+        Route::put( "/updatedrink/{drink}", [ DrinkController::class, "update" ]);
+        
+        //Package
+        Route::get( "/packages", [ PackageController::class, "getPackages" ]);
+        Route::post( "newpackage", [ PackageController::class, "create" ]);
+        Route::put( "/updatepackage/{package}", [ PackageController::class, "update" ]);
+        
+        //Type
+        Route::get( "/types", [ TypeController::class, "getTypes" ]);
+        Route::post( "/newtype", [ TypeController::class, "create" ])->middleware( "role" );
+        Route::put( "/updatetype/{type}", [ TypeController::class, "update" ]);
+        
+        //User management
+        Route::get( "/users", [ AdminController::class, "getUsers" ]);
+        Route::get( "/addadmin/{user}", [ AdminController::class, "setAdminRole" ]);
+        Route::get( "/deladmin/{user}", [ AdminController::class, "delAdminRole" ]);
+        Route::post( "/newuser", [ AdminController::class, "createUser" ]);
+        Route::put( "/setpassword/{user}", [ AdminController::class, "setPassword" ]);
+        Route::get( "/token", [ AdminController::class, "getTokens" ]);
+
+        Route::middleware([
+            "abilities:drinks:delete",
+            "abilities:packages:delete",
+            "abilities:types:delete",
+            ])->group( function() {
+
+                Route::delete( "/deletedrink/{drink}", [ DrinkController::class, "destroy" ]);
+                Route::delete( "deletepackage/{package}", [ PackageController::class, "destroy" ]);
+                Route::delete( "/deletetype/{type}", [ TypeController::class, "destroy" ]);
+            });
+    });
+});
 
 

@@ -15,14 +15,19 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         
+        $middleware->group('api', [
+            Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
+
         $middleware->alias([
             //'auth' => Illuminate\Auth\Middleware\Authenticate::class,
             //'can' => \Illuminate\Auth\Middleware\Authorize::class,
             //'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
             //'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'ability' => CheckForAnyAbility::class,
-            'abilities' => CheckAbilities::class
-    
+            'abilities' => CheckAbilities::class,
+            "role" => \App\Http\Middleware\AdminMiddleware::class
+
             //"limiter" => ThrottleRequests::class.":5,1",
             //"role" => \App\Http\Middleware\CheckIsAdmin::class,
         ]);

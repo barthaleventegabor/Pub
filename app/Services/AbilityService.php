@@ -10,11 +10,15 @@ class AbilityService {
         //
     }
 
+    public function createSuperAbilities() {
+
+        return [ "*" ];
+    }
+
     public function createAdminAbilities() {
 
 
         return [
-            "admin",
             "users:create",
             "users:read",
             "users:update",
@@ -38,7 +42,6 @@ class AbilityService {
     public function createUserAbilities() {
 
         return [
-            "user",
             "users:create",
             "users:update",
             "users:delete",

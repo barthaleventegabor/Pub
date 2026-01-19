@@ -17,17 +17,17 @@ class TokenService {
 
     public function generateToken( $user ) {
 
-        if( $user->role == "admin" ) {
+        if( $user->role === "super" ) {
 
-            return $user->createToken( $user->name . "Token", $this->abilityService->createAdminAbilities() )->plainTextToken;
+            return $user->createToken( $user->name . "Token", $this->abilityService->createSuperAbilities() )->plainTextToken;
 
-        }else if( $user->role == "user" ){
+        }else if( $user->role === "admin" ){
 
-            return $user->createToken( $user->name . "Token", $this->abilityService->createUserAbilities()  )->plainTextToken;
+            return $user->createToken( $user->name . "Token", $this->abilityService->createAdminAbilities()  )->plainTextToken;
         
         }else {
 
-            return $user->createToken( $user->name . "Token" )->plainTextToken;
+            return $user->createToken( $user->name . "Token", $this->abilityService->createUserAbilities() )->plainTextToken;
         }
     }
 

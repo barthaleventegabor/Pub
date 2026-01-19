@@ -51,4 +51,9 @@ class User extends Authenticatable
 
         return $this->hasMany( UserProfile::class );
     }
+
+    public function isAdmin(): bool {
+
+        return in_array( $this->role, [ "admin", "super" ]);
+    }
 }
