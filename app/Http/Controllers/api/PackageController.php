@@ -65,11 +65,5 @@ class PackageController extends Controller {
         }
     }
 
-    public function getPackageId( $package ) {
-
-        $package = Package::where( "package", $package )->first();
-        $id = $package->id;
-
-        return $id;
-    }
+    
 }

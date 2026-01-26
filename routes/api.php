@@ -49,11 +49,7 @@ Route::middleware([ "auth:sanctum" ])->group( function() {
         Route::put( "/setpassword/{user}", [ AdminController::class, "setPassword" ]);
         Route::get( "/token", [ AdminController::class, "getTokens" ]);
 
-        Route::middleware([
-            "abilities:drinks:delete",
-            "abilities:packages:delete",
-            "abilities:types:delete",
-            ])->group( function() {
+        Route::middleware([ "abilities:drinks:delete", ])->group( function() {
 
                 Route::delete( "/deletedrink/{drink}", [ DrinkController::class, "destroy" ]);
                 Route::delete( "deletepackage/{package}", [ PackageController::class, "destroy" ]);

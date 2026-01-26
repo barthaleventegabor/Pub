@@ -19,5 +19,19 @@ class AdminSeeder extends Seeder
             "password" => bcrypt( "Aa123?" ),
             "role" => "super"
         ]);
+
+        DB::table( "users" )->insert([
+            "name" => "admin",
+            "email" => "admin@vmi.lan",
+            "password" => bcrypt( "Aa123?" ),
+            "role" => "admin"
+        ]);
+
+        DB::table( "users" )->insert([
+            "name" => "user",
+            "email" => "user@vmi.lan",
+            "password" => bcrypt( "Aa123?" ),
+            "role" => "user"
+        ]);
     }
 }

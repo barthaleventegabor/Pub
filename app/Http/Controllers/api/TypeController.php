@@ -67,11 +67,5 @@ class TypeController extends Controller {
         }
     }
 
-    public function getTypeId( $type ) {
-
-        $type = Type::where( "type", $type )->first();
-        $id = $type->id;
-
-        return $id;
-    }
+    
 }

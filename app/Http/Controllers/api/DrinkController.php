@@ -8,12 +8,21 @@ use App\Models\Drink;
 use App\Http\Requests\DrinkRequest;
 use App\Http\Resources\DrinkResource;
 use App\Traits\ResponseTrait;
+use Illuminate\Support\Facades\Gate;
+use App\Services\DrinkService;
 
 class DrinkController extends Controller {
 
     use ResponseTrait;
+    protected DrinkService $drinkService;
     
+    public function __construct( DrinkService $drinkService ) {
+
+        $this->drinkService = $drinkService;
+    }
     public function getDrinks() {
+
+        Gate::authorize( "viewAny", Drink::class );
 
         $drinks = Drink::with( "type", "package" )->get();
 
@@ -22,29 +31,22 @@ class DrinkController extends Controller {
 
     public function getDrink( Drink $drink ) {
 
+        Gate::authorize( "view", $drink );
         //$ip = $request->ip();
         return $this->sendResponse( ( new DrinkResource( $drink )), "" );
     }
 
     public function create( DrinkRequest $request ) {
 
-        //Servicebe kiszervezni
+        Gate::authorize( "create", Drink::class );
         $validated = $request->validated();
 
-        $drink = new Drink();
-        $drink->drink = $validated[ "drink" ];
-        $drink->amount = $validated[ "amount" ];
-        $drink->price = $validated[ "price" ];
-        $drink->type_id = ( new TypeController )->getTypeId( $validated[ "type" ]);
-        $drink->package_id = ( new PackageController )->getPackageId( $validated[ "package" ]);
-
-        $drink->save();
-
-        return $this->sendResponse( $drink, "Sikeres kiírás" );
+        return $this->drinkService->create( $validated );
     }
 
     public function update( DrinkRequest $request, Drink $drink ) {
 
+        Gate::authorize( "update", $drink );
         //Servicebe kivezetni
         $validated = $request->validated();
 
@@ -61,7 +63,8 @@ class DrinkController extends Controller {
 
     public function destroy( Drink $drink ) {
 
-        $drink->delete();
+        Gate::authorize( "delete", $drink );
+        //$drink->delete();
         
         return $this->sendResponse( $drink, "Sikeres törlés" );
     }
