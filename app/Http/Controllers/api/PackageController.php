@@ -31,7 +31,7 @@ class PackageController extends Controller {
         return $this->sendResponse( $package, "Sikeres írás" );
     }
 
-    public function update( PackageRequest $request, $id ) {
+    public function update( PackageRequest $request,Package $package ) {
 
         $request->validated();
 
