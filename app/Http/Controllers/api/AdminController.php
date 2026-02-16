@@ -88,7 +88,7 @@ class AdminController extends Controller {
 
         $user->update();
 
-        return this->sendResponse([ "user" => $user, "message" => "Jelszó sikeresen megváltozott" ]);
+        return $this->sendResponse([ "user" => $user, "message" => "Jelszó sikeresen megváltozott" ]);
     }
 
     public function getTokens() {
