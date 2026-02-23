@@ -35,7 +35,11 @@ class AbilityService {
             "user_profiles:create",
             "user_profiles:update",
             "user_profiles:read",
-            "user_profiles:delete"
+            "user_profiles:delete",
+            "reserves:create",
+            "reserves:read",
+            "reserves:update",
+            "reserves:delete"
         ];
     }
 
@@ -48,7 +52,11 @@ class AbilityService {
             "user_profiles:create",
             "user_profiles:update",
             "user_profiles:read",
-            "user_profiles:delete"
+            "user_profiles:delete",
+            "reserves:create",
+            "reserves:read",
+            "reserves:update",
+            "reserves:delete"
         ];
     }
 }

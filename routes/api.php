@@ -19,10 +19,9 @@ Route::post( "/login", [ UserController::class, "login" ]);
 
 Route::middleware([ "auth:sanctum" ])->group( function() {
     
-    //Route::post( "/reserve", [ ReserveController::class, "reserveTable" ]);
-    Route::post( "/reserve", function( Request $request ){
-        return auth()->user();
-    });
+    //Reserve
+    Route::post( "/create-reserve", [ ReserveController::class, "reserveTable" ]);
+    Route::get( "/reserve/{reserve}", [ ReserveController::class, "getReserve" ]);
 
     //User
     Route::post( "/logout", [ UserController::class, "logout" ]);
@@ -64,6 +63,10 @@ Route::middleware([ "auth:sanctum" ])->group( function() {
             });
     });
 });
+
+// Reserves
+Route::get("reserves", [ ReserveController::class, "getReserves" ]);
+
 
 Route::get( "/verify_email/{id}/{hash}", function( Request $request, $id, $hash ){
 
