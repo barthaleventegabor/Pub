@@ -11,6 +11,7 @@ use App\Services\ReserveService;
 use App\Traits\ResponseTrait;
 use App\Models\Reserve;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Resources\ReserveResource;
 
 class ReserveController extends Controller {
     
@@ -19,8 +20,7 @@ class ReserveController extends Controller {
 
     public function getReserves() {
         Gate::authorize( "viewAny", Reserve::class );
-        $reserves = Reserve::all();
-        return $this->sendResponse( $reserves );
+        return $this->reserveService->getReserves();
     }
 
     public function getReserve(Reserve $reserve) {
@@ -36,14 +36,25 @@ class ReserveController extends Controller {
         $validated = $request->validated();
 
         $reserve = $this->reserveService->createReserve( $validated );
-        return $this->sendResponse( $reserve , "Sikeres foglalás!" );
+        return $this->sendResponse( $reserve, "Sikeres foglalás!" );
     }
 
-    public function updateReserve() {
+    public function updateReserve(Reserve $reserve, ReserveRequest $request) {
+
+        Gate::authorize( "update", $reserve );
+        $validated = $request->validated();
+        $reserve = $this->reserveService->update( $reserve, $validated );
+        return $this->sendResponse( $reserve, "Sikeres foglalás módosítás!" );
         
     }
 
-    public function deleteReserve() {
-        
+    public function deleteReserve(Reserve $reserve) {
+        Gate::authorize( "delete", $reserve );
+        $success = $this->reserveService->delete( $reserve );
+        if ($success) {
+            return $this->sendResponse( null, "Sikeres foglalás törlés!" );
+        } else {
+            return $this->sendError( "Végrehajtási hiba", ["Sikertelen törlés"],421 );
+        }
     }
 }

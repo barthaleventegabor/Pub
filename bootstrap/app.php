@@ -8,6 +8,7 @@ use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use App\Exceptions\InvalidModelException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,13 +26,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             //'auth' => Illuminate\Auth\Middleware\Authenticate::class,
             //'can' => \Illuminate\Auth\Middleware\Authorize::class,
-            //'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+            'throttle' => ThrottleRequests::class,
             //'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'ability' => CheckForAnyAbility::class,
             'abilities' => CheckAbilities::class,
-            "role" => \App\Http\Middleware\AdminMiddleware::class
+            "role" => \App\Http\Middleware\AdminMiddleware::class,
 
-            //"limiter" => ThrottleRequests::class.":5,1",
+            "limiter" => ThrottleRequests::class.":5,1",
             //"role" => \App\Http\Middleware\CheckIsAdmin::class,
         ]);
     })

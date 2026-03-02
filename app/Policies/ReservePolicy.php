@@ -43,11 +43,18 @@ class ReservePolicy
         return Response::deny("Nincs jogosultságod létrehozni ezt a foglalást.");
     }
 
-    public function update() {
+    public function update(User $user, Reserve $reserve) {
+        if ($user->tokenCan("reserves:update") && $user->id === $reserve->user_id) {
+            return Response::allow();
+        } 
+        return Response::deny("Nincs jogosultságod módosítani ezt a foglalást.");
 
     }
 
-    public function delete() {
-
+    public function delete(User $user, Reserve $reserve) {
+        if ($user->tokenCan("reserves:delete") && $user->id === $reserve->user_id) {
+            return Response::allow();
+        } 
+        return Response::deny("Nincs jogosultságod törölni ezt a foglalást.");
     }
 }

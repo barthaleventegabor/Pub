@@ -15,13 +15,15 @@ use App\Models\User;
 
 //User
 Route::post( "/register", [ UserController::class, "register" ]);
-Route::post( "/login", [ UserController::class, "login" ]);
+Route::post( "/login", [ UserController::class, "login" ])->middleware( "throttle" );
 
 Route::middleware([ "auth:sanctum" ])->group( function() {
     
     //Reserve
     Route::post( "/create-reserve", [ ReserveController::class, "reserveTable" ]);
     Route::get( "/reserve/{reserve}", [ ReserveController::class, "getReserve" ]);
+    Route::put( "/update-reserve/{reserve}", [ ReserveController::class, "updateReserve" ]);
+    Route::delete( "/delete-reserve/{reserve}", [ ReserveController::class, "deleteReserve" ]);
 
     //User
     Route::post( "/logout", [ UserController::class, "logout" ]);
@@ -65,7 +67,7 @@ Route::middleware([ "auth:sanctum" ])->group( function() {
 });
 
 // Reserves
-Route::get("reserves", [ ReserveController::class, "getReserves" ]);
+Route::get("reserves", [ ReserveController::class, "getReserves" ])->middleware("limiter");
 
 
 Route::get( "/verify_email/{id}/{hash}", function( Request $request, $id, $hash ){
