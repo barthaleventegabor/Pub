@@ -15,14 +15,16 @@ use App\Models\User;
 
 //User
 Route::post( "/register", [ UserController::class, "register" ]);
-Route::post( "/login", [ UserController::class, "login" ]);
-Route::get( "/reserves", [ ReserveController::class, "getReserves" ]);
+Route::post( "/login", [ UserController::class, "login" ])->middleware( "throttle" );
+Route::get( "/reserves", [ ReserveController::class, "getReserves" ])->middleware( "limiter" );
 
 Route::middleware([ "auth:sanctum" ])->group( function() {
     
     //Foglalás
     Route::get( "/reserve/{reserve}", [ ReserveController::class, "getReserve" ]);
     Route::post( "/create-reserve", [ ReserveController::class, "reserveTable" ]);
+    Route::put( "/update-reserve/{reserve}", [ ReserveController::class, "updateReserve" ]);
+    Route::delete( "/delete-reserve/{reserve}", [ ReserveController::class, "deleteReserve" ]);
 
     //User
     Route::post( "/logout", [ UserController::class, "logout" ]);

@@ -6,16 +6,24 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Reserve;
+use App\Traits\ResponseTrait;
+use App\Http\Resources\ReserveResource;
 
 
 class ReserveService {
 
-    /**
-     * Create a new class instance.
-     */
+    use ResponseTrait;
+
     public function __construct() {}
 
-    public function createReserve( array $validated ): Reserve {
+    public function getReserves() {
+
+        $reserves = Reserve::all();
+
+        return $this->sendResponse( ReserveResource::collection( $reserves ));
+    }
+
+    public function createReserve( array $validated ): ReserveResource {
 
         $startTime = Carbon::parse( $validated[ "start_time" ]);
         $endTime = $startTime->copy()->addHours( 2 )->subSecond();
@@ -39,6 +47,24 @@ class ReserveService {
 
         $reserve->save();
        
-        return $reserve;
+        return ( new ReserveResource( $reserve ));
+    }
+
+    public function update( Reserve $reserve, array $validated ): ReserveResource {
+
+        $time = Carbon::parse( $validated[ "start_time" ]);
+        $reserve->table_number = $validated[ "table_number" ];
+        $reserve->start_time = $time;
+        $reserve->end_time = $time->copy()->addHours( 2 )->subSecond();
+        $reserve->user_id = Auth::user( "auth:sanctum" )->id;
+
+        $reserve->save();
+
+        return ( new ReserveResource( $reserve ));
+    }
+
+    public function delete( Reserve $reserve ): bool {
+
+        return $reserve->delete();
     }
 }
