@@ -26,7 +26,7 @@ class DrinkService {
         $drink->type_id = $this->typeService->getTypeId( $data[ "type" ]);
         $drink->package_id = $this->packageService->getPackageId( $data[ "package" ]);
 
-        //$drink->save();
+        $drink->save();
 
         return $this->sendResponse( $drink, "Sikeres írás" );
     }

@@ -20,7 +20,7 @@ class AdminMiddleware {
 
         if( !auth( "sanctum" )->check() || !auth()->user()->isAdmin() ) {
 
-            return $this->sendError( "Azonosítási hiba", [ "Admin jog szükséges", 403 ]);
+            return $this->sendError( "Azonosítási hiba", [ "Admin jog szükséges" ], 403 );
         }
         
         return $next( $request );

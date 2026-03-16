@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Drink extends Model {
 
+    protected $fillable = [
+        "drink", "amount", "price", "type_id", "package_id"
+    ];
     //  use HasFactory, Notifiable;
 
     // protected $table = "más_táblanév";

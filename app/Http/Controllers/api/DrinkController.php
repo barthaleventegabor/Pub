@@ -64,7 +64,7 @@ class DrinkController extends Controller {
     public function destroy( Drink $drink ) {
 
         Gate::authorize( "delete", $drink );
-        //$drink->delete();
+        $drink->delete();
         
         return $this->sendResponse( $drink, "Sikeres törlés" );
     }
